@@ -201,6 +201,8 @@ textarea{min-height:180px;line-height:1.5;font-family:Georgia,serif}
 .aide{font-size:13.5px;background:#fff;border:1px dashed #888;padding:10px 12px;margin-top:10px}
 code{background:#1a1a1a;color:#f4f0e4;padding:1px 6px;font-size:13px}
 .alert{border:1.5px solid var(--encre);padding:10px 12px;margin:12px 0;background:#fff8d6;font-family:"Special Elite",monospace;font-size:13px}
+.alert.success{background:#e8f2df;border-color:#31552a;color:#203d1c}
+.alert.error{background:#f8e2df;border-color:#8d3027;color:#70231d}
 
 /* responsive */
 @media(max-width:860px){
