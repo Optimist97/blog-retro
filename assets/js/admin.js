@@ -208,54 +208,50 @@ async function publierGitHub() {
 
   const button = $("btn-publier-github");
   button.disabled = true;
-  status.textContent = "Préparation du commit…";
+  status.className = "alert";
+  status.textContent = "Connexion à GitHub…";
   const headers = { Accept: "application/vnd.github+json", Authorization: `Bearer ${token}`, "X-GitHub-Api-Version": "2022-11-28" };
-  const api = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents`;
   const files = [
     { path: "data/config.json", content: JSON.stringify(CONFIG, null, 2) + "\n" },
     { path: "data/articles.json", content: JSON.stringify(ARTICLES, null, 2) + "\n" }
   ];
   try {
-    const commit = await fetch("https://api.github.com/repos/" + encodeURIComponent(owner) + "/" + encodeURIComponent(repo) + "/git/refs/heads/" + branch.split("/").map(encodeURIComponent).join("/"), { headers });
-    if (!commit.ok) throw new Error(`Branche ${branch} inaccessible (${commit.status}).`);
-    const ref = await commit.json();
-    const treeResponse = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees/${ref.object.sha}?recursive=1`, { headers });
-    if (!treeResponse.ok) throw new Error(`Lecture de l'arbre Git impossible (${treeResponse.status}).`);
-    const tree = await treeResponse.json();
-    const updates = await Promise.all(files.map(async file => {
-      const response = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/blobs`, {
-        method: "POST", headers: { ...headers, "Content-Type": "application/json" },
-        body: JSON.stringify({ content: file.content, encoding: "utf-8" })
-      });
-      if (!response.ok) throw new Error(`Préparation de ${file.path} refusée (${response.status}).`);
-      return { path: file.path, mode: "100644", type: "blob", sha: (await response.json()).sha };
-    }));
-    for (const file of files) {
-      if (!(tree.tree || []).some(item => item.path === file.path && item.type === "blob")) {
-        throw new Error(`Fichier ${file.path} introuvable sur ${branch}.`);
+    const api = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents`;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      status.textContent = `Vérification GitHub… (${i + 1}/${files.length})`;
+      const url = `${api}/${file.path.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(branch)}`;
+      const current = await fetch(url, { headers });
+      if (!current.ok) {
+        const error = new Error(current.status === 401 ? "Jeton invalide ou expiré. Créez un nouveau jeton et réessayez." : current.status === 403 ? "GitHub a refusé l'accès. Vérifiez Contents: Read and write et l'autorisation du jeton pour ce dépôt." : current.status === 404 ? `Dépôt, branche ou fichier ${file.path} introuvable. Vérifiez les champs ci-dessus.` : `Lecture GitHub impossible (HTTP ${current.status}).`);
+        error.status = current.status;
+        throw error;
       }
+      const currentFile = await current.json();
+      status.textContent = `Envoi de ${file.path}… (${i + 1}/${files.length})`;
+      const response = await fetch(`${api}/${file.path.split("/").map(encodeURIComponent).join("/")}`, {
+        method: "PUT",
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "Mettre à jour le contenu du journal", content: btoa(unescape(encodeURIComponent(file.content))), sha: currentFile.sha, branch })
+      });
+      if (!response.ok) {
+        let details = "";
+        try { details = (await response.json()).message || ""; } catch {}
+        const error = new Error(response.status === 401 ? "Jeton invalide ou expiré." : response.status === 403 ? "Publication refusée. Vérifiez que le jeton autorise l'écriture de Contents pour blog-retro." : response.status === 409 ? "Le fichier a changé sur GitHub depuis son chargement. Rechargez le CMS puis réessayez." : `Échec de l'envoi de ${file.path} (HTTP ${response.status})${details ? ` : ${details}` : "."}`);
+        error.status = response.status;
+        throw error;
+      }
+      const result = await response.json();
+      if (i === files.length - 1) status.dataset.commit = result.commit.sha;
     }
-    const newTreeResponse = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees`, {
-      method: "POST", headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify({ base_tree: tree.sha, tree: updates })
-    });
-    if (!newTreeResponse.ok) throw new Error(`Création de l'arbre Git refusée (${newTreeResponse.status}).`);
-    const newTree = await newTreeResponse.json();
-    const newCommitResponse = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/commits`, {
-      method: "POST", headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify({ message: "Mettre à jour le contenu du journal", tree: newTree.sha, parents: [ref.object.sha] })
-    });
-    if (!newCommitResponse.ok) throw new Error(`Création du commit refusée (${newCommitResponse.status}).`);
-    const newCommit = await newCommitResponse.json();
-    const updateRef = await fetch("https://api.github.com/repos/" + encodeURIComponent(owner) + "/" + encodeURIComponent(repo) + "/git/refs/heads/" + branch.split("/").map(encodeURIComponent).join("/"), {
-      method: "PATCH", headers: { ...headers, "Content-Type": "application/json" }, body: JSON.stringify({ sha: newCommit.sha })
-    });
-    if (!updateRef.ok) throw new Error(updateRef.status === 409 ? "La branche a changé pendant la publication. Rechargez les données et réessayez." : `Mise à jour de la branche refusée (${updateRef.status}).`);
-    status.textContent = `Publication effectuée. Commit ${newCommit.sha.slice(0, 7)} sur ${owner}/${repo}@${branch}. GitHub Pages va reconstruire le site.`;
+    const commitSha = status.dataset.commit;
+    status.className = "alert success";
+    status.textContent = `✓ Publication terminée. Commit ${commitSha.slice(0, 7)} sur ${owner}/${repo}@${branch}. GitHub Pages va mettre le site à jour.`;
     $("github-token").value = "";
   } catch (error) {
     console.error("Publication GitHub échouée", error);
-    status.textContent = error.message || "Publication impossible. Vérifiez votre connexion et les droits du jeton.";
+    status.className = "alert error";
+    status.textContent = `Échec de la publication. ${error.message || "Vérifiez votre connexion et les droits du jeton."} Les fichiers envoyés avant l'erreur peuvent déjà être committés sur GitHub.`;
   } finally {
     button.disabled = false;
   }
