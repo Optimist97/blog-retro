@@ -11,13 +11,26 @@ const slugify = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g
   .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || ("article-" + Date.now());
 
 function alerte(msg) {
-  $("alerte").innerHTML = msg ? `<div class="alert">${msg}</div>` : "";
-  if (msg) setTimeout(() => { $("alerte").innerHTML = ""; }, 4500);
+  const box = $("alerte");
+  box.textContent = "";
+  if (!msg) return;
+  const notice = document.createElement("div");
+  notice.className = "alert";
+  notice.textContent = msg;
+  box.appendChild(notice);
+  setTimeout(() => { if (notice.parentNode === box) box.removeChild(notice); }, 4500);
 }
 function save() {
-  localStorage.setItem(LS_CONFIG, JSON.stringify(CONFIG));
-  localStorage.setItem(LS_ARTICLES, JSON.stringify(ARTICLES));
-  majEtat();
+  try {
+    localStorage.setItem(LS_CONFIG, JSON.stringify(CONFIG));
+    localStorage.setItem(LS_ARTICLES, JSON.stringify(ARTICLES));
+    majEtat();
+    return true;
+  } catch (e) {
+    console.error("Échec de sauvegarde locale", e);
+    alerte("Le navigateur refuse le stockage local. Autorisez les données du site, ou exportez les fichiers JSON pour sauvegarder.");
+    return false;
+  }
 }
 async function charger() {
   const d = await loadData();
@@ -70,7 +83,7 @@ function rendreListe() {
   $("compte").textContent = tri.length;
   $("liste").innerHTML = tri.map(a => `
     <div class="item-admin">
-      <div><strong>${a.title || "(sans titre)"}</strong><br>
+      <div><strong>${echapperHTML(a.title || "(sans titre)")}</strong><br>
       <span class="meta">${a.date || ""} · ${a.category || "—"} ${a.featured ? "· ★ À la une" : ""}</span></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <span class="badge ${a.status === "published" ? "pub" : "brou"}">${a.status === "published" ? "Publié" : "Brouillon"}</span>
@@ -164,9 +177,15 @@ function sauverReglages() {
   CONFIG.showAboutOnHome = $("s-showabout").checked;
   CONFIG.footerText = $("s-footer").value.trim();
   const np = $("s-pass").value.trim();
-  if (np) { localStorage.setItem(LS_PASS, np); $("s-pass").value = ""; alerte("Réglages + mot de passe mis à jour."); }
-  else alerte("Réglages enregistrés.");
-  save();
+  if (np) {
+    try { localStorage.setItem(LS_PASS, np); $("s-pass").value = ""; }
+    catch (e) { alerte("Le navigateur refuse le stockage du mot de passe. Autorisez les données du site puis réessayez."); return; }
+  }
+  if (save()) alerte(np ? "Réglages + mot de passe mis à jour." : "Réglages enregistrés.");
+}
+
+function echapperHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 }
 
 /* ---------- Export / import ---------- */
@@ -175,6 +194,71 @@ function telecharger(nom, texte) {
   a.href = URL.createObjectURL(new Blob([texte], { type: "application/json" }));
   a.download = nom; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+async function publierGitHub() {
+  const status = $("github-status");
+  const token = $("github-token").value.trim();
+  const owner = $("github-owner").value.trim();
+  const repo = $("github-repo").value.trim();
+  const branch = $("github-branch").value.trim() || "main";
+  if (!token || !owner || !repo || !branch) {
+    status.textContent = "Renseignez le jeton GitHub, le propriétaire et le dépôt.";
+    return;
+  }
+
+  const button = $("btn-publier-github");
+  button.disabled = true;
+  status.textContent = "Préparation du commit…";
+  const headers = { Accept: "application/vnd.github+json", Authorization: `Bearer ${token}`, "X-GitHub-Api-Version": "2022-11-28" };
+  const api = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents`;
+  const files = [
+    { path: "data/config.json", content: JSON.stringify(CONFIG, null, 2) + "\n" },
+    { path: "data/articles.json", content: JSON.stringify(ARTICLES, null, 2) + "\n" }
+  ];
+  try {
+    const commit = await fetch("https://api.github.com/repos/" + encodeURIComponent(owner) + "/" + encodeURIComponent(repo) + "/git/refs/heads/" + branch.split("/").map(encodeURIComponent).join("/"), { headers });
+    if (!commit.ok) throw new Error(`Branche ${branch} inaccessible (${commit.status}).`);
+    const ref = await commit.json();
+    const treeResponse = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees/${ref.object.sha}?recursive=1`, { headers });
+    if (!treeResponse.ok) throw new Error(`Lecture de l'arbre Git impossible (${treeResponse.status}).`);
+    const tree = await treeResponse.json();
+    const updates = await Promise.all(files.map(async file => {
+      const response = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/blobs`, {
+        method: "POST", headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify({ content: file.content, encoding: "utf-8" })
+      });
+      if (!response.ok) throw new Error(`Préparation de ${file.path} refusée (${response.status}).`);
+      return { path: file.path, mode: "100644", type: "blob", sha: (await response.json()).sha };
+    }));
+    for (const file of files) {
+      if (!(tree.tree || []).some(item => item.path === file.path && item.type === "blob")) {
+        throw new Error(`Fichier ${file.path} introuvable sur ${branch}.`);
+      }
+    }
+    const newTreeResponse = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees`, {
+      method: "POST", headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({ base_tree: tree.sha, tree: updates })
+    });
+    if (!newTreeResponse.ok) throw new Error(`Création de l'arbre Git refusée (${newTreeResponse.status}).`);
+    const newTree = await newTreeResponse.json();
+    const newCommitResponse = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/commits`, {
+      method: "POST", headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "Mettre à jour le contenu du journal", tree: newTree.sha, parents: [ref.object.sha] })
+    });
+    if (!newCommitResponse.ok) throw new Error(`Création du commit refusée (${newCommitResponse.status}).`);
+    const newCommit = await newCommitResponse.json();
+    const updateRef = await fetch("https://api.github.com/repos/" + encodeURIComponent(owner) + "/" + encodeURIComponent(repo) + "/git/refs/heads/" + branch.split("/").map(encodeURIComponent).join("/"), {
+      method: "PATCH", headers: { ...headers, "Content-Type": "application/json" }, body: JSON.stringify({ sha: newCommit.sha })
+    });
+    if (!updateRef.ok) throw new Error(updateRef.status === 409 ? "La branche a changé pendant la publication. Rechargez les données et réessayez." : `Mise à jour de la branche refusée (${updateRef.status}).`);
+    status.textContent = `Publication effectuée. Commit ${newCommit.sha.slice(0, 7)} sur ${owner}/${repo}@${branch}. GitHub Pages va reconstruire le site.`;
+    $("github-token").value = "";
+  } catch (error) {
+    console.error("Publication GitHub échouée", error);
+    status.textContent = error.message || "Publication impossible. Vérifiez votre connexion et les droits du jeton.";
+  } finally {
+    button.disabled = false;
+  }
 }
 function majEtat() {
   const el = $("etat-stockage");
@@ -192,14 +276,27 @@ function goTab(nom) {
 }
 async function init() {
   $("date-jour").textContent = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  await charger();
+  try {
+    await charger();
+  } catch (e) {
+    console.error("Impossible de charger le CMS", e);
+    $("login-err").textContent = "Impossible de charger les données du journal. Ouvrez le site depuis son adresse GitHub Pages et vérifiez que data/config.json et data/articles.json sont accessibles.";
+    $("btn-login").disabled = true;
+    return;
+  }
   document.querySelectorAll(".onglets button").forEach(b => b.addEventListener("click", () => goTab(b.dataset.tab)));
   const tryLogin = () => {
-    const saved = localStorage.getItem(LS_PASS) || DEFAULT_PASS;
+    let saved = DEFAULT_PASS;
+    try { saved = localStorage.getItem(LS_PASS) || DEFAULT_PASS; }
+    catch (e) {
+      console.warn("Stockage du navigateur indisponible", e);
+      $("login-err").textContent = "Le navigateur bloque les données de ce site. Autorisez le stockage local, désactivez la navigation privée ou ouvrez le journal sur son adresse GitHub Pages.";
+      return;
+    }
     if ($("pass").value === saved) {
       $("gate").style.display = "none"; $("cms").style.display = "";
       rendreListe(); remplirReglages(); majEtat(); ouvrirEdition(null); goTab("liste");
-    } else $("login-err").textContent = "Mot de passe incorrect.";
+    } else $("login-err").textContent = "Mot de passe incorrect. Le mot de passe initial est journal1950, sauf s'il a été modifié dans ce navigateur.";
   };
   $("btn-login").addEventListener("click", tryLogin);
   $("pass").addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
@@ -220,6 +317,7 @@ async function init() {
   });
   $("btn-export-config").addEventListener("click", () => telecharger("config.json", JSON.stringify(CONFIG, null, 2)));
   $("btn-export-articles").addEventListener("click", () => telecharger("articles.json", JSON.stringify(ARTICLES, null, 2)));
+  $("btn-publier-github").addEventListener("click", publierGitHub);
   $("btn-import").addEventListener("click", () => $("file-import").click());
   $("file-import").addEventListener("change", e => {
     const f = e.target.files[0]; if (!f) return;
