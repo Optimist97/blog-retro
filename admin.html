@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administration — La Gazette</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>.gate{max-width:420px;margin:60px auto;text-align:center}</style>
+</head>
+<body>
+<div class="feuille">
+  <div class="surbandeau"><span>Service intérieur</span><span>Réservé à la rédaction</span><span>Ne pas diffuser</span></div>
+  <header class="masthead">
+    <div class="fonde">Mini CMS</div>
+    <h1 style="font-size:clamp(32px,5vw,54px)"><a href="index.html">Bureau de rédaction</a></h1>
+    <div><span class="devise">Titre · Articles · Photo N&amp;B auto</span></div>
+  </header>
+  <div class="date-ligne"><span id="date-jour">—</span><span><a href="index.html" style="color:inherit">← Voir le journal</a></span></div>
+
+  <!-- Porte d'entrée -->
+  <div id="gate" class="gate panneau">
+    <h2 style="font-family:'Playfair Display',serif;margin:0 0 8px">Entrez, rédacteur en chef</h2>
+    <p style="font-style:italic">Mot de passe par défaut : <code>journal1950</code> (changeable ensuite, protection simple sans serveur).</p>
+    <label for="pass">Mot de passe</label>
+    <input type="password" id="pass" placeholder="••••••••">
+    <div style="margin-top:12px"><button class="btn plein" id="btn-login">Ouvrir le bureau</button></div>
+    <p id="login-err" style="color:#900"></p>
+  </div>
+
+  <!-- CMS -->
+  <div id="cms" style="display:none">
+    <div class="admin-bar">
+      <div class="onglets">
+        <button data-tab="liste" class="actif">Articles</button>
+        <button data-tab="editer">✎ Rédiger</button>
+        <button data-tab="reglages">Réglages du journal</button>
+        <button data-tab="publier">Publier sur GitHub</button>
+      </div>
+      <div><a class="btn" href="index.html" target="_blank">Voir le site ↗</a></div>
+    </div>
+    <div id="alerte"></div>
+
+    <!-- Liste -->
+    <section id="tab-liste" class="panneau">
+      <h3 style="margin-top:0">Articles (<span id="compte">0</span>)</h3>
+      <div class="liste-admin" id="liste"></div>
+      <div style="margin-top:12px"><button class="btn plein" id="btn-nouveau">+ Nouvel article</button></div>
+    </section>
+
+    <!-- Éditer -->
+    <section id="tab-editer" class="panneau" style="display:none">
+      <h3 style="margin-top:0" id="titre-form">Nouvel article</h3>
+      <input type="hidden" id="f-id">
+      <label>Titre *</label><input type="text" id="f-titre" placeholder="Ex. La foire du samedi sous la pluie">
+      <div class="ligne2">
+        <div><label>Auteur</label><input type="text" id="f-auteur" placeholder="Jeanne Morel"></div>
+        <div><label>Date</label><input type="date" id="f-date"></div>
+      </div>
+      <div class="ligne2">
+        <div><label>Rubrique</label><input type="text" id="f-cat" placeholder="Éditorial, Photographie, Métier…"></div>
+        <div><label>Statut</label>
+          <select id="f-statut"><option value="published">Publié</option><option value="draft">Brouillon</option></select>
+        </div>
+      </div>
+      <label><input type="checkbox" id="f-vedette" style="width:auto"> Mettre à la une (un seul article vedette)</label>
+      <label>Chapeau (résumé court)</label><input type="text" id="f-chapeau" placeholder="Une phrase qui donne envie de lire.">
+      <label>Texte (mini-markdown : ## titre, **gras**, *italique*, &gt; citation, - liste)</label>
+      <textarea id="f-contenu" placeholder="## Premier paragraphe&#10;&#10;Écrivez ici…"></textarea>
+
+      <label>Photo unique — convertie auto en noir &amp; blanc *</label>
+      <input type="file" id="f-photo" accept="image/*">
+      <div class="aide">☛ Une seule photo par article. Import couleur accepté : la <strong>chambre noire automatique</strong> la passe en N&amp;B (luminance + contraste + grain), la réduit (max 1400 px) et la compresse. Le rendu ajoute aussi un filtre <code>grayscale</code> pour garantir le rétro.</div>
+      <div id="apercu"></div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="btn-suppr-photo" type="button">Retirer la photo</button>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn plein" id="btn-sauver">Enregistrer</button>
+        <button class="btn" id="btn-apercu-art">Aperçu</button>
+        <button class="btn" id="btn-annuler">Annuler</button>
+      </div>
+      <div id="apercu-rendu" style="margin-top:14px"></div>
+    </section>
+
+    <!-- Réglages -->
+    <section id="tab-reglages" class="panneau" style="display:none">
+      <h3 style="margin-top:0">Paramétrer l'ensemble du site</h3>
+      <label>Titre du journal *</label><input type="text" id="s-titre">
+      <label>Sous-titre / devise</label><input type="text" id="s-tagline">
+      <label>Bandeau (ex. Prix : 5 centimes)</label><input type="text" id="s-motto">
+      <label>Mention « depuis »</label><input type="text" id="s-founded">
+      <label>Texte « À propos » (page d'accueil)</label><input type="text" id="s-about">
+      <label><input type="checkbox" id="s-showabout" style="width:auto"> Afficher le bloc À propos</label>
+      <label>Pied de page</label><input type="text" id="s-footer">
+      <label>Nouveau mot de passe admin (laisser vide = inchangé)</label><input type="password" id="s-pass" placeholder="Nouveau mot de passe">
+      <div style="margin-top:14px"><button class="btn plein" id="btn-sauver-reglages">Enregistrer les réglages</button></div>
+    </section>
+
+    <!-- Publier -->
+    <section id="tab-publier" class="panneau" style="display:none">
+      <h3 style="margin-top:0">Publier (site statique → GitHub Pages)</h3>
+      <div class="aide">
+        <strong>Principe :</strong> ce CMS fonctionne <em>sans serveur</em>. Vos modifications sont d'abord enregistrées dans ce navigateur (localStorage) pour prévisualisation immédiate.<br>
+        Pour mettre en ligne, <strong>exportez</strong> les 2 fichiers ci-dessous puis remplacez-les dans votre dépôt GitHub (<code>data/config.json</code> et <code>data/articles.json</code>), commitez, et GitHub Pages republie seul.
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn plein" id="btn-export-config">⬇ Exporter config.json</button>
+        <button class="btn plein" id="btn-export-articles">⬇ Exporter articles.json</button>
+        <button class="btn" id="btn-import">⬆ Importer un JSON</button>
+        <input type="file" id="file-import" accept="application/json" style="display:none">
+        <button class="btn" id="btn-reset">Réinitialiser la démo</button>
+      </div>
+      <div class="aide" style="margin-top:12px">
+        <strong>Mise en ligne en 4 étapes :</strong><br>
+        1. Créez un dépôt GitHub (ex. <code>ma-gazette</code>) et poussez ce dossier.<br>
+        2. Sur GitHub : <code>Settings → Pages → Deploy from a branch → main / (root)</code>.<br>
+        3. Après chaque modification dans ce CMS : Exportez → écrasez les 2 fichiers dans le dépôt → <code>Commit</code>.<br>
+        4. Votre journal est lisible à <code>https://VOTRE-PSEUDO.github.io/ma-gazette/</code>.<br><br>
+        Astuce : utilisez <code>admin.html</code> en local (<code>python3 -m http.server</code>) ou directement sur l'URL GitHub Pages : <code>…/admin.html</code> pour retoucher à distance puis ré-exporter.
+      </div>
+      <div id="etat-stockage" class="alert"></div>
+    </section>
+  </div>
+
+  <footer class="journal-pied"><div>Administration — usage interne · Les photos importées deviennent N&amp;B automatiquement</div></footer>
+</div>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

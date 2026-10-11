@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article — La Gazette du Matin</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="feuille">
+  <div class="surbandeau">
+    <span data-config="founded">Depuis 1952</span>
+    <span>Édition quotidienne du matin</span>
+    <span data-config="motto">Prix : 5 centimes</span>
+  </div>
+  <header class="masthead">
+    <div class="fonde">Journal indépendant</div>
+    <h1><a href="index.html" data-config="siteTitle">La Gazette du Matin</a></h1>
+    <div><span class="devise" data-config="tagline">Faits, récits &amp; idées</span></div>
+  </header>
+  <div class="date-ligne"><span id="date-jour">—</span><span><a href="index.html" style="color:inherit">← Retour à la une</a></span></div>
+  <nav class="journal-nav">
+    <a href="index.html">À la une</a>
+    <a href="admin.html" class="admin-link">⚙ Administration</a>
+  </nav>
+  <main id="article-box"></main>
+  <footer class="journal-pied"><div data-config="footerText"></div></footer>
+</div>
+<script src="assets/js/site.js"></script>
+<script>renderArticle();</script>
+</body>
+</html>

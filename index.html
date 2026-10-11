@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-config-title>La Gazette du Matin — Journal</title>
+<meta name="description" content="Blog minimaliste rétro noir et blanc, esprit journal papier des années 50.">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="feuille">
+  <div class="surbandeau">
+    <span data-config="founded">Depuis 1952</span>
+    <span>Édition quotidienne du matin</span>
+    <span data-config="motto">Prix : 5 centimes</span>
+  </div>
+
+  <header class="masthead">
+    <div class="fonde">Journal indépendant</div>
+    <h1><a href="index.html" data-config="siteTitle">La Gazette du Matin</a></h1>
+    <div><span class="devise" data-config="tagline">Faits, récits &amp; idées</span></div>
+  </header>
+
+  <div class="date-ligne">
+    <span id="date-jour">—</span>
+    <span>N° <span id="numero">247</span> · Tiré à 1 000 exemplaires</span>
+  </div>
+
+  <nav class="journal-nav">
+    <a href="index.html" class="actif">À la une</a>
+    <span id="nav-cats" style="display:contents"></span>
+    <a href="admin.html" class="admin-link" title="Mini CMS">⚙ Administration</a>
+  </nav>
+
+  <main>
+    <div id="une"></div>
+
+    <div class="section-titre">Dernières dépêches</div>
+    <div id="grille" class="grille"></div>
+
+    <div id="bloc-apropos" class="óa-propos">
+      <strong>À propos — </strong><p style="display:inline;margin:0"></p>
+    </div>
+  </main>
+
+  <footer class="journal-pied">
+    <div data-config="footerText">© La Gazette du Matin</div>
+    <div style="margin-top:6px">Site statique · Compatible GitHub Pages · Encre noire sur papier crème</div>
+  </footer>
+</div>
+<script>
+document.getElementById("numero").textContent = 240 + (new Date().getDate() % 20);
+</script>
+<script src="assets/js/site.js"></script>
+<script>renderHome();</script>
+</body>
+</html>

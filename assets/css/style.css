@@ -1,0 +1,219 @@
+/* La Gazette — rétro papier années 50, N&B */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap');
+
+:root{
+  --papier:#f4f0e4;
+  --papier-2:#ece6d4;
+  --encre:#1a1a1a;
+  --encre-douce:#3d3a33;
+  --filet:#1a1a1a;
+  --gris:#6b675e;
+  --max:1080px;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:#232220 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  color:var(--encre);
+  font-family:"Old Standard TT", Georgia, "Times New Roman", serif;
+  line-height:1.6;
+}
+
+/* Feuille papier centrée */
+.feuille{
+  max-width:var(--max);
+  margin:24px auto 48px;
+  background:var(--papier) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.05'/%3E%3C/svg%3E");
+  border:1px solid #111;
+  box-shadow:0 20px 60px rgba(0,0,0,.55), 0 1px 0 #000;
+  padding:0 28px 28px;
+  position:relative;
+}
+.feuille::before{
+  content:"";
+  position:absolute;inset:8px;
+  border:1px solid rgba(26,26,26,.35);
+  pointer-events:none;
+}
+
+/* Bandeau haut */
+.surbandeau{
+  display:flex;justify-content:space-between;gap:12px;
+  font-family:"Special Elite", "Courier New", monospace;
+  font-size:12px;letter-spacing:.04em;
+  text-transform:uppercase;
+  border-bottom:3px double var(--filet);
+  padding:12px 4px 8px;
+  color:var(--encre-douce);
+}
+.surbandeau span:nth-child(2){text-align:center}
+.surbandeau span:last-child{text-align:right}
+
+/* Masthead */
+.masthead{text-align:center;padding:18px 0 12px;border-bottom:3px double var(--filet)}
+.masthead .fonde{font-family:"Special Elite",monospace;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--gris)}
+.masthead h1{
+  font-family:"Playfair Display", Georgia, serif;
+  font-weight:900;
+  font-size:clamp(42px,7vw,84px);
+  line-height:.95;margin:.08em 0 .1em;
+  letter-spacing:-.01em;
+  text-transform:none;
+}
+.masthead h1 a{color:inherit;text-decoration:none}
+.masthead .devise{
+  font-family:"Special Elite",monospace;
+  font-size:13px;letter-spacing:.08em;
+  border-top:1px solid var(--filet);
+  border-bottom:1px solid var(--filet);
+  display:inline-block;padding:5px 18px;margin-top:6px;
+  text-transform:uppercase;
+}
+.date-ligne{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:"Special Elite",monospace;font-size:12.5px;
+  padding:8px 2px;border-bottom:1px solid var(--filet);
+  text-transform:uppercase;letter-spacing:.03em;flex-wrap:wrap;gap:8px;
+}
+
+/* Nav */
+nav.journal-nav{
+  display:flex;gap:4px;justify-content:center;flex-wrap:wrap;
+  padding:10px 0;border-bottom:3px double var(--filet);
+  font-family:"Special Elite",monospace;font-size:13px;text-transform:uppercase;
+}
+nav.journal-nav a{
+  color:var(--encre);text-decoration:none;
+  padding:4px 12px;border:1px solid transparent;
+}
+nav.journal-nav a:hover, nav.journal-nav a.actif{border:1px solid var(--encre);background:#1a1a1a;color:var(--papier)}
+nav.journal-nav .admin-link{opacity:.65}
+
+/* À la une */
+.une-label{
+  font-family:"Special Elite",monospace;text-align:center;
+  letter-spacing:.3em;text-transform:uppercase;font-size:12px;margin:22px 0 10px;
+}
+.une-label::before,.une-label::after{content:" — "}
+.une{
+  border:2px solid var(--filet);padding:18px;background:#faf7ec;
+  display:grid;grid-template-columns:1.15fr .85fr;gap:20px;
+}
+.une h2{font-family:"Playfair Display",serif;font-weight:900;font-size:clamp(28px,4vw,44px);line-height:1.02;margin:0 0 10px}
+.une h2 a{color:inherit;text-decoration:none}
+.une h2 a:hover{text-decoration:underline;text-decoration-thickness:2px}
+.chapeau{font-style:italic;font-size:18px;color:var(--encre-douce);margin:0 0 12px}
+.meta{font-family:"Special Elite",monospace;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--gris);margin-bottom:10px}
+.cat{
+  display:inline-block;font-family:"Special Elite",monospace;font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid var(--encre);padding:2px 8px;margin-bottom:10px;background:var(--encre);color:var(--papier);
+}
+.btn{
+  display:inline-block;font-family:"Special Elite",monospace;font-size:13px;text-transform:uppercase;letter-spacing:.06em;
+  border:1.5px solid var(--encre);padding:8px 16px;color:var(--encre);text-decoration:none;background:transparent;cursor:pointer;
+}
+.btn:hover{background:var(--encre);color:var(--papier)}
+.btn.plein{background:var(--encre);color:var(--papier)}
+.btn.plein:hover{background:#000}
+
+/* Photo N&B obligatoire */
+.photo-cadre{
+  background:#fff;border:1px solid var(--encre);padding:8px;
+  box-shadow:3px 3px 0 rgba(26,26,26,.9);
+}
+.photo-cadre figure{margin:0}
+.photo-cadre img{
+  display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;
+  filter:grayscale(1) contrast(1.15) brightness(.98) sepia(.12);
+}
+.photo-cadre figcaption{
+  font-family:"Special Elite",monospace;font-size:12px;
+  padding:8px 2px 0;color:var(--encre-douce);font-style:normal;
+}
+.photo-cadre .mention-nb{
+  display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris);margin-top:2px;
+}
+/* grain par-dessus */
+.img-nb{position:relative;overflow:hidden;background:#ddd}
+.img-nb::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.16;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* Grille articles */
+.section-titre{
+  display:flex;align-items:center;gap:12px;margin:28px 0 14px;
+  font-family:"Special Elite",monospace;font-size:13px;letter-spacing:.24em;text-transform:uppercase;
+}
+.section-titre::before,.section-titre::after{content:"";height:1px;background:var(--filet);flex:1}
+.grille{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.carte{
+  border:1.5px solid var(--filet);background:#faf7ec;padding:0;display:flex;flex-direction:column;
+}
+.carte .photo-cadre{margin:10px 10px 0;box-shadow:none}
+.carte .photo-cadre img{aspect-ratio:16/10}
+.carte-corps{padding:12px 14px 14px;display:flex;flex-direction:column;flex:1}
+.carte h3{font-family:"Playfair Display",serif;font-size:21px;line-height:1.15;margin:8px 0 6px}
+.carte h3 a{color:inherit;text-decoration:none}
+.carte h3 a:hover{text-decoration:underline}
+.carte p{margin:0 0 10px;font-size:15.5px}
+.carte .meta{margin-top:auto;padding-top:8px;border-top:1px dashed #999}
+
+/* Article plein */
+.article-entete{text-align:center;padding:20px 0 6px;max-width:760px;margin:0 auto}
+.article-entete h2{font-family:"Playfair Display",serif;font-weight:900;font-size:clamp(30px,5vw,52px);line-height:1.02;margin:10px 0}
+.article-photo{max-width:820px;margin:16px auto}
+.colonnes{max-width:820px;margin:18px auto;column-count:2;column-gap:28px;column-rule:1px solid #b9b2a0;font-size:17px;text-align:justify}
+.colonnes h2{font-family:"Playfair Display",serif;column-span:all;font-size:28px;margin:18px 0 8px}
+.colonnes p:first-of-type::first-letter{
+  font-family:"Playfair Display",serif;font-weight:900;font-size:3.4em;float:left;line-height:.85;padding:4px 8px 0 0;
+}
+.colonnes blockquote{column-span:all;border-top:2px solid var(--encre);border-bottom:2px solid var(--encre);margin:16px 0;padding:10px 12px;font-style:italic;font-size:20px;text-align:center}
+.colonnes ul{break-inside:avoid}
+.filet-fin{text-align:center;margin:26px 0 6px;font-family:"Special Elite",monospace}
+.óa-propos{border:1.5px solid var(--filet);padding:14px 16px;background:#faf7ec;margin-top:22px;font-style:italic}
+footer.journal-pied{border-top:3px double var(--filet);margin-top:28px;padding:14px 2px 2px;text-align:center;font-family:"Special Elite",monospace;font-size:12px;color:var(--encre-douce);text-transform:uppercase;letter-spacing:.04em}
+.vide{border:1px dashed #888;padding:30px;text-align:center;font-style:italic;background:#faf7ec}
+
+/* Formulaires / admin réutilise la feuille */
+.admin-bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin:18px 0}
+.onglets{display:flex;gap:6px;flex-wrap:wrap}
+.onglets button{font-family:"Special Elite",monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;border:1.5px solid var(--encre);background:transparent;padding:8px 12px;cursor:pointer}
+.onglets button.actif{background:var(--encre);color:var(--papier)}
+.panneau{border:1.5px solid var(--encre);background:#faf7ec;padding:16px;margin-bottom:16px}
+label{display:block;font-family:"Special Elite",monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin:12px 0 4px}
+input[type=text],input[type=date],input[type=password],select,textarea{
+  width:100%;border:1.5px solid var(--encre);background:#fffdf4;padding:9px 10px;font-family:Georgia,serif;font-size:15px;color:var(--encre);
+}
+textarea{min-height:180px;line-height:1.5;font-family:Georgia,serif}
+.ligne2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.liste-admin{display:grid;gap:10px}
+.item-admin{border:1px solid var(--encre);padding:10px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center;background:#fffdf4;flex-wrap:wrap}
+.badge{font-family:"Special Elite",monospace;font-size:11px;text-transform:uppercase;border:1px solid var(--encre);padding:2px 8px}
+.badge.pub{background:#1a1a1a;color:#f4f0e4}.badge.brou{background:transparent}
+.petits-btns{display:flex;gap:6px;flex-wrap:wrap}
+.petits-btns button,.petits-btns a{font-family:"Special Elite",monospace;font-size:11.5px;text-transform:uppercase;border:1px solid var(--encre);background:#fff;padding:6px 10px;cursor:pointer;text-decoration:none;color:var(--encre)}
+.petits-btns button:hover{background:var(--encre);color:var(--papier)}
+.apercu-photo{max-width:320px;margin-top:8px}
+.aide{font-size:13.5px;background:#fff;border:1px dashed #888;padding:10px 12px;margin-top:10px}
+code{background:#1a1a1a;color:#f4f0e4;padding:1px 6px;font-size:13px}
+.alert{border:1.5px solid var(--encre);padding:10px 12px;margin:12px 0;background:#fff8d6;font-family:"Special Elite",monospace;font-size:13px}
+
+/* responsive */
+@media(max-width:860px){
+  .feuille{margin:0;padding:0 14px 20px}
+  .une{grid-template-columns:1fr}
+  .grille{grid-template-columns:1fr}
+  .colonnes{column-count:1;text-align:left}
+  .ligne2{grid-template-columns:1fr}
+  .surbandeau span:nth-child(2){display:none}
+}
+@media print{
+  body{background:#fff}
+  .feuille{box-shadow:none;margin:0;max-width:none;border:none}
+  nav.journal-nav,.admin-bar,.no-print{display:none!important}
+  .colonnes{column-count:2}
+}

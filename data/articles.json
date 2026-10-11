@@ -1,0 +1,67 @@
+[
+  {
+    "id": "le-retour-du-papier",
+    "title": "Le retour du papier : pourquoi on imprime encore",
+    "author": "Jeanne Morel",
+    "date": "2026-10-05",
+    "category": "Éditorial",
+    "excerpt": "À l'heure des écrans, notre petite rédaction parie sur l'encre, la lenteur et une seule photo par histoire.",
+    "content": "## Une rédaction à contre-courant\n\nIci, pas de notifications. On écrit au calme, on relit deux fois, on choisit **une seule photo** — et on la tire en noir et blanc.\n\n> Le gris est une couleur. Le papier est un écran qui ne s'éteint jamais.\n\nLe papier impose une discipline :\n\n- un titre qui dit vrai\n- un chapeau qui donne envie\n- un texte qui va à l'essentiel\n\nEt puis on imprime. L'odeur de l'encre, le pli de la page, le café qui tache le coin. C'est fragile, c'est lent, et c'est pour cela que ça compte.",
+    "photo": "",
+    "photoCaption": "La presse du matin, tirage de 7h12.",
+    "status": "published",
+    "featured": true
+  },
+  {
+    "id": "une-seule-photo",
+    "title": "Une seule photo, et rien d'autre",
+    "author": "Henri Aubert",
+    "date": "2026-10-02",
+    "category": "Photographie",
+    "excerpt": "Importer une photo couleur, la voir devenir noir et blanc. Démonstration de notre chambre noire automatique.",
+    "content": "## La règle d'or\n\nChaque article n'accepte qu'**une seule photographie**. Importez-la en couleur si vous voulez : notre chambre noire la transforme aussitôt en noir et blanc.\n\n> Un seul cadre. Un seul instant. Pas de carrousel.\n\n## Comment ça marche ?\n\nDans l'administration, ajoutez votre image. Elle est convertie (luminance, contraste, grain léger) puis compressée. Le résultat est net, rétro, et léger pour GitHub Pages.\n\nEssayez avec un portrait, une rue, un atelier. Le noir et blanc pardonne beaucoup et révèle l'essentiel.",
+    "photo": "",
+    "photoCaption": "Rue Saint-Michel, 7h45.",
+    "status": "published",
+    "featured": false
+  },
+  {
+    "id": "ecrire-court-ecrire-vrai",
+    "title": "Écrire court, écrire vrai",
+    "author": "Jeanne Morel",
+    "date": "2026-09-28",
+    "category": "Métier",
+    "excerpt": "Nos recettes de style : phrases courtes, lettrine en tête, et chute qui claque comme un tampon.",
+    "content": "## Le style Gazette\n\nNos articles tiennent sur une page. On ouvre par un chapeau, on aère, on cite peu mais bien.\n\nVous pouvez utiliser dans le CMS :\n\n- les titres avec ## \n- le **gras** et *l'italique*\n- les citations avec >\n- les listes avec -\n\n> Écrivez comme si chaque mot coûtait un centime.\n\nC'est notre seule coûteuse modernité : la brièveté.",
+    "photo": "",
+    "photoCaption": "",
+    "status": "published",
+    "featured": false
+  },
+  {
+    "id": "cafe-du-commerce-rouvre",
+    "title": "Le café du commerce rouvre ses volets",
+    "author": "Henri Aubert",
+    "date": "2026-10-08",
+    "category": "Reportage",
+    "excerpt": "Fermé depuis trois ans, le comptoir de la place du Marché ressert son premier crème dès lundi, sous la même enseigne.",
+    "content": "## Trois ans de volets clos\n\nLa place n'avait plus son odeur. Depuis lundi, elle l'a retrouvée : le **café du commerce** rallume sa percolation, cire son comptoir et dépoussière ses banquettes en skaï.\n\n> On n'a rien modernisé. On a tout nettoyé, dit la nouvelle patronne.\n\nÀ la carte :\n\n- crème en tasse épaisse\n- tartine beurrée du boulanger d'en face\n- journal du jour posé sur le zinc\n\n## Le premier service\n\nLes habitués sont revenus avec leurs habitudes. Marcel a repris sa table du fond. L'addition, elle, est restée raisonnable : *le crème ne dépassera pas le prix d'une baguette et demie*.\n\nOuverture lundi à 7 heures précises. Les volets grincent encore un peu. C'est bon signe.",
+    "photo": "",
+    "photoCaption": "La devanture, veille de réouverture.",
+    "status": "published",
+    "featured": false
+  },
+  {
+    "id": "atelier-lavigne-postes-lampes",
+    "title": "L'atelier Lavigne répare encore les postes à lampes",
+    "author": "Jeanne Morel",
+    "date": "2026-09-20",
+    "category": "Artisanat",
+    "excerpt": "Rue des Tanneurs, on dépanne les radios d'avant la transistor : diagnostic à l'oreille, soudure fine et patience.",
+    "content": "## Une boutique qui sent la bakélite\n\nDerrière la vitrine, une centaine de postes attendent. L'atelier Lavigne, fondé en **1954**, n'a jamais fermé : on y répare ce que les autres remplacent.\n\n> Un poste à lampes, ça se réveille doucement. On le laisse chauffer, on l'écoute.\n\n## La méthode\n\n- démontage et dépoussiérage au pinceau\n- contrôle des lampes une par une\n- condensateurs changés, câblage refait à l'identique\n\nComptez deux à trois semaines de délai. *Chaque appareil repart avec sa fiche d'atelier tamponnée à la main.*\n\nL'atelier reçoit le samedi matin, sans rendez-vous, dans la limite des établis disponibles.",
+    "photo": "",
+    "photoCaption": "L'établi du fond, lampes en attente de test.",
+    "status": "published",
+    "featured": false
+  }
+]
