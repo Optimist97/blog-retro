@@ -20,7 +20,7 @@
   <!-- Porte d'entrée -->
   <div id="gate" class="gate panneau">
     <h2 style="font-family:'Playfair Display',serif;margin:0 0 8px">Entrez, rédacteur en chef</h2>
-    <p style="font-style:italic">Mot de passe par défaut : <code>journal1950</code> (changeable ensuite, protection simple sans serveur).</p>
+    <p style="font-style:italic">Mot de passe initial : <code>journal1950</code>. Il est mémorisé dans ce navigateur seulement.</p>
     <label for="pass">Mot de passe</label>
     <input type="password" id="pass" placeholder="••••••••">
     <div style="margin-top:12px"><button class="btn plein" id="btn-login">Ouvrir le bureau</button></div>
@@ -101,8 +101,7 @@
     <section id="tab-publier" class="panneau" style="display:none">
       <h3 style="margin-top:0">Publier (site statique → GitHub Pages)</h3>
       <div class="aide">
-        <strong>Principe :</strong> ce CMS fonctionne <em>sans serveur</em>. Vos modifications sont d'abord enregistrées dans ce navigateur (localStorage) pour prévisualisation immédiate.<br>
-        Pour mettre en ligne, <strong>exportez</strong> les 2 fichiers ci-dessous puis remplacez-les dans votre dépôt GitHub (<code>data/config.json</code> et <code>data/articles.json</code>), commitez, et GitHub Pages republie seul.
+        <strong>Principe :</strong> GitHub Pages ne fournit pas de serveur d’écriture. Vos modifications sont enregistrées dans ce navigateur pour prévisualisation immédiate. Utilisez la publication directe ci-dessous pour créer un commit dans votre dépôt, ou exportez les JSON.
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
         <button class="btn plein" id="btn-export-config">⬇ Exporter config.json</button>
@@ -111,19 +110,32 @@
         <input type="file" id="file-import" accept="application/json" style="display:none">
         <button class="btn" id="btn-reset">Réinitialiser la démo</button>
       </div>
+      <div class="panneau" style="margin-top:18px">
+        <h3 style="margin-top:0">Publication directe sur GitHub (facultative)</h3>
+        <p>Cette option crée un commit avec vos deux fichiers JSON sur la branche choisie. Créez un jeton personnel GitHub finement limité à ce dépôt, avec la permission <code>Contents: Read and write</code>. Le jeton n'est pas enregistré et est envoyé uniquement à l'API officielle de GitHub. Toute personne ayant accès à cette page peut voir le code du CMS ; n'utilisez pas un jeton à droits étendus ici.</p>
+        <label for="github-token">Jeton GitHub</label><input type="password" id="github-token" autocomplete="off" placeholder="github_pat_…">
+        <div class="ligne2">
+          <div><label for="github-owner">Propriétaire du dépôt</label><input type="text" id="github-owner" value="Optimist97"></div>
+          <div><label for="github-repo">Dépôt</label><input type="text" id="github-repo" value="blog-retro"></div>
+        </div>
+        <label for="github-branch">Branche</label><input type="text" id="github-branch" value="main">
+        <div style="margin-top:12px"><button class="btn plein" id="btn-publier-github">Publier les deux fichiers JSON sur GitHub</button></div>
+        <p id="github-status" role="status" aria-live="polite"></p>
+      </div>
       <div class="aide" style="margin-top:12px">
         <strong>Mise en ligne en 4 étapes :</strong><br>
         1. Créez un dépôt GitHub (ex. <code>ma-gazette</code>) et poussez ce dossier.<br>
         2. Sur GitHub : <code>Settings → Pages → Deploy from a branch → main / (root)</code>.<br>
-        3. Après chaque modification dans ce CMS : Exportez → écrasez les 2 fichiers dans le dépôt → <code>Commit</code>.<br>
+        3. Après chaque modification : utilisez la publication directe ci-dessus, ou exportez les fichiers puis commitez-les dans le dépôt.<br>
         4. Votre journal est lisible à <code>https://VOTRE-PSEUDO.github.io/ma-gazette/</code>.<br><br>
-        Astuce : utilisez <code>admin.html</code> en local (<code>python3 -m http.server</code>) ou directement sur l'URL GitHub Pages : <code>…/admin.html</code> pour retoucher à distance puis ré-exporter.
+        <strong>Adresse du CMS :</strong> ouvrez <code>https://optimist97.github.io/blog-retro/admin.html</code> dans le même navigateur que le journal. Évitez le mode privé et autorisez les données du site. Le mot de passe et les brouillons restent sur cet appareil.<br>
+        Pour écrire hors ligne, lancez <code>python3 -m http.server 8000</code> dans le dossier du site puis ouvrez <code>http://localhost:8000/admin.html</code>. La publication directe nécessite internet et un jeton autorisé pour ce dépôt.
       </div>
       <div id="etat-stockage" class="alert"></div>
     </section>
   </div>
 
-  <footer class="journal-pied"><div>Administration — usage interne · Les photos importées deviennent N&amp;B automatiquement</div></footer>
+  <footer class="journal-pied"><div>Administration — données locales à ce navigateur · Les photos importées deviennent N&amp;B automatiquement</div></footer>
 </div>
 <script src="assets/js/site.js"></script>
 <script src="assets/js/admin.js"></script>
