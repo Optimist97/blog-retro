@@ -1,6 +1,5 @@
 /* Mini CMS — localStorage + export JSON pour GitHub Pages. Photo unique -> N&B auto via canvas. */
-const LS_CONFIG = "retro50_config";
-const LS_ARTICLES = "retro50_articles";
+/* LS_CONFIG / LS_ARTICLES déjà définis dans site.js (chargé avant) */
 const LS_PASS = "retro50_pass";
 const DEFAULT_PASS = "journal1950";
 
