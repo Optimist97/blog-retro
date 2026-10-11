@@ -31,23 +31,15 @@ python3 -m http.server 8000
 - Créer / modifier / publier / dépublier / supprimer des articles.
 - **Une seule photo par article** : import couleur accepté → conversion auto N&B (canvas : luminance + contraste + grain, redimensionné max 1400 px, JPEG 0.82). Le CSS `grayscale(1)` verrouille le rendu.
 - Prévisualisation, statuts **Publié / Brouillon**, un seul article **À la une**.
-- Stockage navigateur (localStorage) + **Export config.json / articles.json** à commiter.
+- Stockage navigateur (localStorage), export JSON et publication directe facultative vers GitHub avec un jeton finement limité.
 
 ## Publier sur GitHub Pages (statique)
 
-1. Créez un dépôt GitHub, poussez ce dossier :
-   ```bash
-   cd blog-retro
-   git init -b main
-   git add . && git commit -m "ma gazette"
-   git remote add origin https://github.com/VOTRE-PSEUDO/ma-gazette.git
-   git push -u origin main
-   ```
-2. GitHub → `Settings → Pages → Deploy from a branch → main / (root)`.
-3. URL : `https://VOTRE-PSEUDO.github.io/ma-gazette/`
-4. Après chaque retouche CMS : `admin.html → Publier → Exporter` → écrasez `data/*.json` dans le dépôt → commit → Pages republie seul (1-2 min).
+Le dépôt `Optimist97/blog-retro` doit être publié depuis `main / (root)` dans GitHub → `Settings → Pages`. L'adresse du journal est `https://optimist97.github.io/blog-retro/` et celle du CMS est **`https://optimist97.github.io/blog-retro/admin.html`**. Gardez le chemin `/blog-retro/` : un site de projet GitHub Pages n'est pas publié à la racine du domaine.
 
-> Sécurité : le mot de passe admin (`journal1950` par défaut, changeable dans Réglages) est une simple porte, pas une vraie authentification — normal pour un site statique. Ne mettez rien de secret dans le CMS.
+Après chaque retouche CMS, vous pouvez publier directement les deux JSON depuis l'onglet **Publier sur GitHub**. Pour cela, créez un jeton personnel finement limité (fine-grained) pour le seul dépôt `Optimist97/blog-retro`, accordez `Contents: Read and write`, puis collez-le dans le formulaire. Le jeton est utilisé en mémoire pour cet envoi et n'est pas conservé par le navigateur. La publication crée un commit sur `main` et GitHub Pages republie le site. Vous pouvez aussi exporter puis commiter les deux fichiers manuellement.
+
+> Limites : le CMS est statique. Le mot de passe (`journal1950` initialement) et les brouillons sont conservés uniquement dans le stockage local du navigateur. Ils ne sont pas partagés entre appareils et le mot de passe n'est pas une authentification sécurisée. L'export JSON ne publie rien automatiquement. Utilisez le même navigateur, autorisez les données du site et évitez le mode privé.
 
 ## Écrire un article
 
